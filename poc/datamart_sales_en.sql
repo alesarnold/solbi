@@ -1,6 +1,14 @@
-CREATE OR ALTER VIEW datamart_sales_en
+/****** Object:  View [dbo].[datamart_sales_en]    Script Date: 30/09/2024 14:26:14 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE OR ALTER   VIEW [dbo].[datamart_sales_en]
 AS
 SELECT
+    UUID as uuid,
     TIPO AS sale_or_product_return_movement_type, -- Tipo de movimento: venda ou devolução de produto
     SAIDA_FILIAL AS branch_that_sold_the_product, -- Filial que vendeu o produto
     SAIDA_NM_FILIAL AS name_of_the_branch_that_sold_the_product, -- Nome da filial que vendeu o produto
@@ -76,7 +84,13 @@ SELECT
     NM_MOEDA AS currency_name, -- Nome da moeda
     PESO_TEORICO_UNITARIO AS theoretical_unit_weight, -- Peso teórico unitário
     PESO_TEORICO_KILOS AS theoretical_weight_in_kilos, -- Peso teórico em quilos
-    TAXA AS rate -- Taxa
+    TAXA AS rate, -- Taxa
+	DATA_INCLUSAO_UTC AS insertion_date_utc  
+
 FROM BI_FAT_FATO_VENDAS
 WHERE TES_GERA_DUPLICATA = 'S'
 AND VENDA_INTERCOMPANY <> 'S'
+GO
+
+
+sp_help datamart_sales_en
