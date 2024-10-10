@@ -6,13 +6,13 @@
 namespace etl.api.solbi.sales
 
 class pedidos_controle
-
 public method New()
-
-//@GET('/api/v1/totvsRecibos/titles/financialTitles/:origBranch/:customer/:unit/:datebase')
-
 @GET("/etl/solbi/sales/:sdatetime_utc")
 public method get_records()
+@GET("/etl/solbi/sales/range/:sdatetime_utc_ini/:sdatetime_utc_fim")
+public method get_records_by_range()
+
+
 
 endClass
 
@@ -27,71 +27,34 @@ EndPoint para obter os Registros a partir de uma data
 @type function
 @version 1
 */
-
 Method get_records() Class pedidos_controle
-
 Local xRest := oRest  // Sempre Recebe do Metodo o objeto oRest
-
 Private jHeaderRes := JsonObject():New()
 Private jHeader    := xRest:getHeaderRequest()
 Private jPath      := xRest:getPathParamsRequest()
-             
 sDataTIME := jPath['sdatetime_utc']
-
-oResponse := U_AETL001J(sDataTime)
-
+oResponse := U_AETL001J(sDataTime,sDataTIME)
 oRest:setKeyHeaderResponse('Content-Type','application/json')
 oRest:SetResponse(oResponse)
-
-
 Return .T.
 
 
-// Função para buscar pedidos incluídos ou alterados
-/*
-Static Function BuscarRegistros(sDataTime)
 
-Local oJsonRet := JsonObject():New()
-
-Local cQuery    := ''
-Local jRegistros := JsonObject():New()
-Local aRegistros  := {}
-
-cQuery += "select * from datamart_sales_en where insertion_date_utc = '2024-01-10 20:35:35.813' "
-conout(cQuery)
-
-If select("TMP_SALES") <> 0
-   dbSelectArea("TMP_SALES")
-   DbCloseArea()
-Endif
-
-cQuery := ChangeQuery(cQuery)
-TCQUERY cQuery NEW ALIAS "TMP_SALES"
-
-dbSelectArea("TMP_SALES")
-
-aRegistros := {}
-aItem    := {}
-
-Do While !Eof()
-
-
-    jRegistros := JsonObject():New()
-    jRegistros['sale_or_product_return_movement_type']  := TMP_SALES->sale_or_product_return_movement_type              // Filial do Sistema
-    Aadd(aRegistros, jRegistros)
-
-    DbSelectArea('TMP_SALES')
-    DbSkip()
-
-Enddo
-
-oJsonRet['records'] := aRegistros
-
-DbSelectArea('TMP_SALES')
-DbCloseArea()
-
-//RpcClearEnv()
-
-
-Return oJsonRet
+/*/{Protheus.doc} get_records_by_range
+EndPoint para obter os Registros a partir de uma data
+@type function
+@version 1
 */
+Method get_records_by_range() Class pedidos_controle
+Local xRest := oRest  // Sempre Recebe do Metodo o objeto oRest
+Private jHeaderRes := JsonObject():New()
+Private jHeader    := xRest:getHeaderRequest()
+Private jPath      := xRest:getPathParamsRequest()
+sDataTIMEINI := jPath['sdatetime_utc_ini']
+sDataTIMEFIM := jPath['sdatetime_utc_fim']
+
+oResponse := U_AETL001J(sDataTimeINI,sDataTIMEFIM)
+oRest:setKeyHeaderResponse('Content-Type','application/json')
+oRest:SetResponse(oResponse)
+Return .T.
+

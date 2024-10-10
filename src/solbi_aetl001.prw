@@ -12,7 +12,7 @@ Processa como JOB a consulta de Produtos para Buscar a Empresa Correta pelo CNPJ
 @since 09/2024
 /*/
 //---------------------------------------------------------------------------------------------
-User Function AETL001J(sDataTime)
+User Function AETL001J(sDTIMEINI,sDTIMEFIM)
 
 Local oJsonRet := JsonObject():New()
 
@@ -44,7 +44,9 @@ cQuery += " rate, "
 cQuery += "     CONVERT(VARCHAR(19), insertion_date_utc, 120) AS insertion_date_utc "
 cQuery += " from datamart_sales_en " 
 cQuery += " where " 
-cQuery += " insertion_date_utc >= '"+sDataTime+"'"
+cQuery += "     insertion_date_utc >= '"+sDTIMEINI+"'"
+cQuery += " and insertion_date_utc <= '"+sDTIMEFIM+"'"
+
 conout(cQuery)
 
 If select("TMP_SALES") <> 0
@@ -57,7 +59,6 @@ TCQUERY cQuery NEW ALIAS "TMP_SALES"
 
 dbSelectArea("TMP_SALES")
 aEstrutura := dbStruct()
-
 
 aRegistros := {}
 aItem    := {}
@@ -90,7 +91,7 @@ Return oJsonRet
 
 User Function AETL001Teste()
 
-cRet := U_AETL001J('2024-09-15')
+cRet := U_AETL001J('2024-10-09','2024-10-10')
 CjSON := CRET:TOJSON()
 Aviso("JSON-TEXTO",cJSON,{"JSON"},3,,,,.T.)
 
